@@ -54,6 +54,29 @@ def parse_sitemap(sitemap: str, **kwargs) -> "None | pd.DataFrame":
     return urls
 
 
+def get_thing_id_from_url(url):
+    for thing in url.split("/"):
+        try:
+            thing = int(thing)
+            return thing
+        except ValueError:
+            ...
+    return None
+
+
+def dummy_bgg_call():
+    r = requests.get('https://boardgamegeek.com/xmlapi2/thing?id=1,2,3,4')
+    this_games = ET.fromstring(r.text)
+    # print(r.text)
+    for this_child in list(this_games):
+        this_id = this_child.attrib['id']
+        name = this_child.find('name').attrib['value']
+        min_players = this_child.find('minplayers').attrib['value']
+        max_players = this_child.find('maxplayers').attrib['value']
+        year_published = this_child.find('yearpublished').attrib['value']
+        print(f'{this_id} - {name} - {min_players} - {max_players} - {year_published}')
+
+
 # Define Game Data Scrape Function
 def retrieve_game_data(browser, url):
     try:
